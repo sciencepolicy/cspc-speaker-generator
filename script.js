@@ -26,11 +26,11 @@ const TEXT_BOX = {
   minY: 620,
   maxBottom: 1080,
   nameMaxSize: 52,
-  nameMinSize: 29,
+  nameMinSize: 24,
   titleMaxSize: 32,
-  titleMinSize: 22,
+  titleMinSize: 18,
   orgMaxSize: 29,
-  orgMinSize: 20,
+  orgMinSize: 17,
   lineHeight: 1.12,
   sectionGap: 12
 };
@@ -45,6 +45,7 @@ let activeLanguage = 'English';
 let templateImage = new Image();
 let headshot = null;
 let crop = { x: 0, y: 0, zoom: 1 };
+let detailsOffset = 0;
 let detailsY = TEXT_BOX.defaultY;
 let dragMode = null;
 let dragStart = null;
@@ -105,10 +106,14 @@ function wrapText(text, maxWidth, font) {
 
 function buildTextLayout(name, title, org) {
   const availableWidth = TEXT_BOX.width;
-  const maxHeight = TEXT_BOX.maxBottom - TEXT_BOX.minY;
+  const safeHeight = TEXT_BOX.maxBottom - TEXT_BOX.minY;
+  // Keep some vertical travel available even for long bios. If the text is
+  // lengthy, shrink it before using up the entire movable safe area.
+  const minVerticalTravel = 140;
+  const maxHeight = safeHeight - minVerticalTravel;
 
   // Scale all three text styles together until every line fits comfortably.
-  for (let scale = 1; scale >= 0.55; scale -= 0.025) {
+  for (let scale = 1; scale >= 0.42; scale -= 0.025) {
     const nameSize = Math.max(TEXT_BOX.nameMinSize, Math.round(TEXT_BOX.nameMaxSize * scale));
     const titleSize = Math.max(TEXT_BOX.titleMinSize, Math.round(TEXT_BOX.titleMaxSize * scale));
     const orgSize = Math.max(TEXT_BOX.orgMinSize, Math.round(TEXT_BOX.orgMaxSize * scale));
@@ -133,7 +138,7 @@ function buildTextLayout(name, title, org) {
     }
 
     const plateHeight = contentHeight + TEXT_BOX.paddingY * 2;
-    if (plateHeight <= maxHeight || scale <= 0.575) {
+    if (plateHeight <= maxHeight || scale <= 0.445) {
       return {
         nameSize, titleSize, orgSize,
         nameLines, titleLines, orgLines,
@@ -179,10 +184,20 @@ function drawDetails() {
   const plateX = TEXT_BOX.x - TEXT_BOX.paddingX;
   const plateW = TEXT_BOX.width + TEXT_BOX.paddingX * 2;
 
-  // Keep the dynamically-sized plate inside the safe area.
+  // Position is controlled by an OFFSET from a sensible default position.
+  // Auto-sizing may change the box height, but it never resets the user's offset.
   const maxY = TEXT_BOX.maxBottom - layout.plateHeight;
-  detailsY = Math.min(Math.max(detailsY, TEXT_BOX.minY), maxY);
-  detailsPositionRange.value = String(Math.round(detailsY));
+  const baseY = Math.min(Math.max(TEXT_BOX.defaultY, TEXT_BOX.minY), maxY);
+  const minOffset = TEXT_BOX.minY - baseY;
+  const maxOffset = maxY - baseY;
+
+  detailsOffset = Math.min(Math.max(detailsOffset, minOffset), maxOffset);
+  detailsY = baseY + detailsOffset;
+
+  // Keep the range control synchronized with the actual currently available travel.
+  detailsPositionRange.min = String(Math.floor(minOffset));
+  detailsPositionRange.max = String(Math.ceil(maxOffset));
+  detailsPositionRange.value = String(Math.round(detailsOffset));
 
   const plateY = detailsY;
   lastTextBounds = { x: plateX, y: plateY, width: plateW, height: layout.plateHeight };
@@ -249,8 +264,9 @@ function resetCrop() {
 }
 
 function resetDetails() {
+  detailsOffset = 0;
   detailsY = TEXT_BOX.defaultY;
-  detailsPositionRange.value = String(detailsY);
+  detailsPositionRange.value = '0';
   draw();
 }
 
@@ -301,7 +317,7 @@ canvas.addEventListener('pointerdown', (event) => {
     dragStart = { point, cropX: crop.x, cropY: crop.y };
   } else if (isInsideTextBox(point)) {
     dragMode = 'details';
-    dragStart = { point, detailsY };
+    dragStart = { point, detailsOffset };
   } else {
     return;
   }
@@ -318,7 +334,7 @@ canvas.addEventListener('pointermove', (event) => {
     crop.x = dragStart.cropX + (point.x - dragStart.point.x);
     crop.y = dragStart.cropY + (point.y - dragStart.point.y);
   } else if (dragMode === 'details') {
-    detailsY = dragStart.detailsY + (point.y - dragStart.point.y);
+    detailsOffset = dragStart.detailsOffset + (point.y - dragStart.point.y);
   }
   draw();
 });
@@ -341,7 +357,7 @@ zoomRange.addEventListener('input', () => {
 });
 resetCropButton.addEventListener('click', resetCrop);
 detailsPositionRange.addEventListener('input', () => {
-  detailsY = Number(detailsPositionRange.value);
+  detailsOffset = Number(detailsPositionRange.value);
   draw();
 });
 resetDetailsButton.addEventListener('click', resetDetails);
