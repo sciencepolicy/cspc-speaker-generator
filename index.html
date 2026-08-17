@@ -98,9 +98,9 @@
 
     .cspc-footer-inner {
       display: grid;
-      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1.15fr);
-      gap: 22px;
-      align-items: center;
+      grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.55fr);
+      column-gap: clamp(80px, 12vw, 220px);
+      align-items: start;
     }
 
     .footer-block {
@@ -108,8 +108,8 @@
     }
 
     .footer-block + .footer-block {
-      border-left: 1px solid #e4e9f0;
-      padding-left: 22px;
+      border-left: 0;
+      padding-left: 0;
     }
 
     .footer-heading {
@@ -242,13 +242,14 @@
     @media (max-width: 900px) {
       .cspc-footer-inner {
         grid-template-columns: 1fr;
+        row-gap: 24px;
       }
 
-      .footer-block + .footer-block {
-        border-left: 0;
-        border-top: 1px solid #e4e9f0;
+      .footer-right-stack {
         padding-left: 0;
-        padding-top: 16px;
+        padding-top: 20px;
+        border-left: 0;
+        border-top: 1px dotted #c7d2e1;
       }
     }
 
@@ -277,25 +278,22 @@
     }
 
     .footer-block:first-child {
-      background: #f6f9fd;
-      border: 1px solid #dce6f1;
-      border-radius: 14px;
-      padding: 16px;
+      padding: 8px 0 4px;
     }
 
     .footer-block:first-child .footer-heading {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .footer-block:first-child .footer-heading::before {
       content: "";
-      width: 22px;
-      height: 22px;
-      flex: 0 0 22px;
+      width: 28px;
+      height: 28px;
+      flex: 0 0 28px;
       background: no-repeat center / contain
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2310214a' d='M18 8a3 3 0 1 0-2.83-4H15a3 3 0 0 0 .47 1.6L8.91 9.38A3 3 0 1 0 9 14.6l6.47 3.73A3 3 0 1 0 16.5 16l-6.47-3.73a3.1 3.1 0 0 0 0-.54l6.56-3.78A3 3 0 0 0 18 8Z'/%3E%3C/svg%3E");
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke='%2310214a' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 16 15 9M8 16l8 7M15 9l9 3M16 23l8-4M24 12v7'/%3E%3Ccircle cx='8' cy='16' r='3.2' fill='%23fff'/%3E%3Ccircle cx='15' cy='9' r='3.2' fill='%23fff'/%3E%3Ccircle cx='16' cy='23' r='3.2' fill='%2310214a' stroke='%2310214a'/%3E%3Ccircle cx='24' cy='12' r='3.2' fill='%2310214a' stroke='%2310214a'/%3E%3C/g%3E%3C/svg%3E");
     }
 
     .footer-heading {
@@ -305,8 +303,16 @@
       margin-bottom: 8px;
     }
 
-    .footer-block + .footer-block {
-      padding-top: 16px;
+    .footer-right-stack {
+      display: grid;
+      gap: 18px;
+      padding-left: 28px;
+      border-left: 1px dotted #c7d2e1;
+    }
+
+    .footer-right-stack .footer-block + .footer-block {
+      padding-top: 18px;
+      border-top: 1px solid #e7ecf2;
     }
 
   </style>
@@ -406,8 +412,7 @@
 
     <footer class="cspc-footer" aria-label="CSPC links, social media and contact information">
       <div class="cspc-footer-inner">
-
-        <section class="footer-block">
+<section class="footer-block">
           <h2 class="footer-heading" data-i18n="footerTagHeading">Share your CSPC 2026 graphic</h2>
           <p class="footer-copy" data-i18n="footerTagCopy">Tag CSPC when you post so we can help amplify your participation.</p>
           <div class="social-row">
@@ -461,41 +466,42 @@
           </div>
         </section>
 
-        <section class="footer-block">
-          <h2 class="footer-heading" data-i18n="footerExploreHeading">Explore</h2>
-          <div class="footer-links">
-            <a class="footer-link"
-               href="https://www.sciencepolicyconference.ca/"
-               target="_blank"
-               rel="noopener noreferrer">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z"/>
-              </svg>
-              <span data-i18n="footerConferenceLink">www.sciencepolicyconference.ca</span>
-            </a>
+        <div class="footer-right-stack">
+          <section class="footer-block">
+                    <h2 class="footer-heading" data-i18n="footerExploreHeading">Explore</h2>
+                    <div class="footer-links">
+                      <a class="footer-link"
+                         href="https://www.sciencepolicyconference.ca/"
+                         target="_blank"
+                         rel="noopener noreferrer">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z"/>
+                        </svg>
+                        <span data-i18n="footerConferenceLink">CSPC 2026</span>
+                      </a>
+          
+                      <a class="footer-link"
+                         href="https://sciencepolicy.ca/"
+                         target="_blank"
+                         rel="noopener noreferrer">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z"/>
+                        </svg>
+                        <span data-i18n="footerCentreLink">CSPC website</span>
+                      </a>
+                    </div>
+                  </section>
 
-            <a class="footer-link"
-               href="https://sciencepolicy.ca/"
-               target="_blank"
-               rel="noopener noreferrer">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z"/>
-              </svg>
-              <span data-i18n="footerCentreLink">CSPC website</span>
-            </a>
-          </div>
-        </section>
-
-        <section class="footer-block">
-          <h2 class="footer-heading" data-i18n="footerHelpHeading">Questions or technical issues?</h2>
-          <a class="footer-link footer-email" href="mailto:conference@sciencepolicy.ca">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5-8-5V6l8 5 8-5v2Z"/>
-            </svg>
-            <span>conference@sciencepolicy.ca</span>
-          </a>
-        </section>
-
+          <section class="footer-block">
+                    <h2 class="footer-heading" data-i18n="footerHelpHeading">Questions or technical issues?</h2>
+                    <a class="footer-link footer-email" href="mailto:conference@sciencepolicy.ca">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5-8-5V6l8 5 8-5v2Z"/>
+                      </svg>
+                      <span>conference@sciencepolicy.ca</span>
+                    </a>
+                  </section>
+        </div>
       </div>
     </footer>
 
@@ -583,7 +589,7 @@
       downloadReady: 'Your PNG has been generated.',
       footerTagHeading: 'Share your CSPC 2026 graphic',
       footerExploreHeading: 'Explore',
-      footerConferenceLink: 'www.sciencepolicyconference.ca',
+      footerConferenceLink: 'CSPC 2026',
       footerCentreLink: 'Canadian Science Policy Centre',
       footerHelpHeading: 'Questions or technical issues?',
       templateError: (language) => `Could not load ${language}.png. Check that it is inside the assets folder with exactly that filename.`
@@ -622,7 +628,7 @@
       downloadReady: 'Votre fichier PNG a été généré.',
       footerTagHeading: 'Partagez votre visuel de la CPSC 2026',
       footerExploreHeading: 'Explorer',
-      footerConferenceLink: 'www.sciencepolicyconference.ca',
+      footerConferenceLink: 'CPSC 2026',
       footerCentreLink: 'Centre sur les politiques scientifiques canadiennes',
       footerHelpHeading: 'Questions ou problèmes techniques?',
       templateError: (language) => `Impossible de charger ${language}.png. Vérifiez que le fichier se trouve dans le dossier assets et que son nom est exactement identique.`
