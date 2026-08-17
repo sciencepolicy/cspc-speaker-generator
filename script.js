@@ -5,7 +5,6 @@ const photoInput = document.getElementById('photoInput');
 const zoomRange = document.getElementById('zoomRange');
 const resetCropButton = document.getElementById('resetCrop');
 const cropControls = document.getElementById('cropControls');
-const detailsPositionRange = document.getElementById('detailsPositionRange');
 const resetDetailsButton = document.getElementById('resetDetails');
 const nameInput = document.getElementById('nameInput');
 const titleInput = document.getElementById('titleInput');
@@ -194,11 +193,6 @@ function drawDetails() {
   detailsOffset = Math.min(Math.max(detailsOffset, minOffset), maxOffset);
   detailsY = baseY + detailsOffset;
 
-  // Keep the range control synchronized with the actual currently available travel.
-  detailsPositionRange.min = String(Math.floor(minOffset));
-  detailsPositionRange.max = String(Math.ceil(maxOffset));
-  detailsPositionRange.value = String(Math.round(detailsOffset));
-
   const plateY = detailsY;
   lastTextBounds = { x: plateX, y: plateY, width: plateW, height: layout.plateHeight };
 
@@ -266,7 +260,6 @@ function resetCrop() {
 function resetDetails() {
   detailsOffset = 0;
   detailsY = TEXT_BOX.defaultY;
-  detailsPositionRange.value = '0';
   draw();
 }
 
@@ -309,6 +302,18 @@ function isInsideTextBox(point) {
     point.y >= lastTextBounds.y && point.y <= lastTextBounds.y + lastTextBounds.height;
 }
 
+canvas.addEventListener('pointermove', (event) => {
+  // When not actively dragging, show the user what can be moved.
+  if (!dragMode) {
+    const point = canvasPoint(event);
+    if (isInsideTextBox(point) || (headshot && isInsidePhotoCircle(point))) {
+      canvas.style.cursor = 'grab';
+    } else {
+      canvas.style.cursor = 'default';
+    }
+  }
+});
+
 canvas.addEventListener('pointerdown', (event) => {
   const point = canvasPoint(event);
 
@@ -323,6 +328,7 @@ canvas.addEventListener('pointerdown', (event) => {
   }
 
   canvas.classList.add('is-dragging');
+  canvas.style.cursor = 'grabbing';
   canvas.setPointerCapture(event.pointerId);
 });
 
@@ -343,6 +349,7 @@ function endDrag(event) {
   if (!dragMode) return;
   dragMode = null;
   canvas.classList.remove('is-dragging');
+  canvas.style.cursor = 'default';
   if (event.pointerId !== undefined && canvas.hasPointerCapture(event.pointerId)) {
     canvas.releasePointerCapture(event.pointerId);
   }
@@ -356,10 +363,6 @@ zoomRange.addEventListener('input', () => {
   draw();
 });
 resetCropButton.addEventListener('click', resetCrop);
-detailsPositionRange.addEventListener('input', () => {
-  detailsOffset = Number(detailsPositionRange.value);
-  draw();
-});
 resetDetailsButton.addEventListener('click', resetDetails);
 [nameInput, titleInput, orgInput].forEach(el => el.addEventListener('input', draw));
 
