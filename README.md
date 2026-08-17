@@ -1,35 +1,26 @@
 # CSPC 2026 Speaker Graphic Generator
 
-A static, browser-based generator for CSPC 2026 speaker social graphics. Speakers can choose an English, French or bilingual template, upload a headshot, reposition/zoom it, add their name/title/organization, and download a 1080 × 1350 PNG.
+Static GitHub Pages generator for CSPC 2026 speaker graphics.
 
-## GitHub Pages setup
+## Included
+- English, French, and bilingual CSPC templates
+- Local headshot upload and circular crop
+- Drag + zoom headshot controls
+- Kelson Sans Regular for generated speaker details
+- Automatic wrapping for long names, titles, and organizations
+- Automatic font-size reduction when the full details block is long
+- Dynamically sized background plate
+- Details box can be dragged vertically or moved with a slider
+- Browser-only PNG generation; photos are not uploaded to a server
 
-1. Create a new public GitHub repository, for example `cspc-speaker-generator`.
-2. Upload **all contents of this folder**, preserving the `assets` folder.
-3. In the repository, open **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Select the `main` branch and `/(root)` folder, then save.
-6. GitHub will provide a public URL such as `https://YOURUSERNAME.github.io/cspc-speaker-generator/`.
+## Publish on GitHub Pages
+Upload all files and the `assets` folder to the repository root, then go to:
 
-## Files
+Settings → Pages → Deploy from a branch → `main` → `/(root)` → Save.
 
-- `index.html` — interface
-- `style.css` — page styling
-- `script.js` — template selection, photo crop, text rendering and PNG download
-- `assets/English.png`
-- `assets/French.png`
-- `assets/Bilingual.png`
 
-## Privacy
+## Version 3 updates
 
-The generator is entirely client-side. Uploaded headshots are read in the visitor's browser and are not sent to a server by this code.
-
-## Easy customizations
-
-In `script.js`:
-
-- `PHOTO_CIRCLE` controls the headshot circle position and radius.
-- `TEXT_BOX` controls where the speaker's name/title/organization appear.
-- `templates` controls the template filenames.
-
-No framework, package manager, build process or backend is required.
+- Added the bilingual Canadian Science Policy Centre logo to the top of the generator.
+- Replaced the old heading with “Social Media Graphic Generator for CSPC 2026 Speakers.”
+- Added clearer introductory instructions for speakers.
