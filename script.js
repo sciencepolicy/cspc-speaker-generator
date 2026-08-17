@@ -3,7 +3,6 @@
 
   const canvas = document.getElementById('graphicCanvas');
   if (!canvas) return;
-
   const ctx = canvas.getContext('2d');
 
   const photoInput = document.getElementById('photoInput');
@@ -17,6 +16,8 @@
   const downloadButton = document.getElementById('downloadButton');
   const clearButton = document.getElementById('clearButton');
   const status = document.getElementById('status');
+  const uiEnglish = document.getElementById('uiEnglish');
+  const uiFrench = document.getElementById('uiFrench');
 
   const TEMPLATE_SIZE = { width: 1080, height: 1350 };
   const PHOTO_CIRCLE = { x: 273, y: 825, r: 188 };
@@ -45,6 +46,78 @@
     Bilingual: 'assets/Bilingual.png'
   };
 
+  const i18n = {
+    en: {
+      title: 'Social Media Graphic Generator for CSPC 2026 Speakers',
+      intro: 'Create your personalized CSPC 2026 speaker graphic: Choose a language, upload and position your headshot and details, then download your finished image for social media.',
+      step1: '1. Choose your graphic',
+      graphicEnglish: 'English',
+      graphicFrench: 'Français',
+      graphicBilingual: 'Bilingual / Bilingue',
+      step2: '2. Upload your headshot',
+      choosePhoto: 'Choose photo',
+      photoPrivacy: 'JPG, PNG or HEIC supported by your browser. Your photo stays on your device.',
+      zoom: 'Zoom',
+      resetCrop: 'Reset crop',
+      photoDrag: 'Drag the photo directly in the preview to reposition it.',
+      step3: '3. Add your details',
+      nameLabel: 'Name',
+      titleLabel: 'Title / role',
+      orgLabel: 'Organization',
+      positionHeading: 'Position your details',
+      positionHelp: 'Drag the text box directly in the preview to reposition it.',
+      longTextHelp: 'Long names, titles and organizations automatically wrap and shrink to fit.',
+      resetText: 'Reset text position',
+      download: 'Download PNG',
+      startOver: 'Start over',
+      livePreview: 'Live preview',
+      previewTip: 'Tip: drag your headshot to adjust the crop. Drag anywhere inside the details box to reposition it.',
+      namePlaceholder: 'Dr. Jane Smith',
+      titlePlaceholder: 'Director of Research',
+      orgPlaceholder: 'Example Institute',
+      canvasLabel: 'CSPC speaker graphic preview',
+      fileError: 'That image could not be opened. Try a JPG or PNG.',
+      readError: 'That image could not be read.',
+      downloadReady: 'Your PNG has been generated.',
+      templateError: (language) => `Could not load ${language}.png. Check that it is inside the assets folder with exactly that filename.`
+    },
+    fr: {
+      title: 'Générateur de visuels pour les médias sociaux destiné aux conférenciers de la CPSC 2026',
+      intro: 'Créez votre visuel personnalisé de conférencier pour la CPSC 2026 : choisissez une langue, téléversez et positionnez votre photo et vos renseignements, puis téléchargez votre image finale pour les médias sociaux.',
+      step1: '1. Choisissez votre visuel',
+      graphicEnglish: 'Anglais',
+      graphicFrench: 'Français',
+      graphicBilingual: 'Bilingue',
+      step2: '2. Téléversez votre photo',
+      choosePhoto: 'Choisir une photo',
+      photoPrivacy: 'Formats JPG, PNG ou HEIC pris en charge par votre navigateur. Votre photo demeure sur votre appareil.',
+      zoom: 'Zoom',
+      resetCrop: 'Réinitialiser le cadrage',
+      photoDrag: 'Faites glisser la photo directement dans l’aperçu pour la repositionner.',
+      step3: '3. Ajoutez vos renseignements',
+      nameLabel: 'Nom',
+      titleLabel: 'Titre / rôle',
+      orgLabel: 'Organisation',
+      positionHeading: 'Positionnez vos renseignements',
+      positionHelp: 'Faites glisser la zone de texte directement dans l’aperçu pour la repositionner.',
+      longTextHelp: 'Les noms, titres et organisations plus longs passent automatiquement à la ligne et sont réduits au besoin.',
+      resetText: 'Réinitialiser la position du texte',
+      download: 'Télécharger le PNG',
+      startOver: 'Recommencer',
+      livePreview: 'Aperçu en direct',
+      previewTip: 'Astuce : faites glisser votre photo pour ajuster le cadrage. Faites glisser la zone de renseignements pour la repositionner.',
+      namePlaceholder: 'Dr Jane Smith',
+      titlePlaceholder: 'Directrice de la recherche',
+      orgPlaceholder: 'Institut exemple',
+      canvasLabel: 'Aperçu du visuel de conférencier de la CPSC',
+      fileError: 'Cette image n’a pas pu être ouverte. Essayez un fichier JPG ou PNG.',
+      readError: 'Cette image n’a pas pu être lue.',
+      downloadReady: 'Votre fichier PNG a été généré.',
+      templateError: (language) => `Impossible de charger ${language}.png. Vérifiez que le fichier se trouve dans le dossier assets et que son nom est exactement identique.`
+    }
+  };
+
+  let uiLanguage = 'en';
   let activeLanguage = 'English';
   let templateImage = null;
   let headshot = null;
@@ -54,10 +127,34 @@
   let dragMode = null;
   let dragStart = null;
   let lastTextBounds = null;
-  let kelsonReady = false;
+
+  function t(key) {
+    return i18n[uiLanguage][key];
+  }
 
   function setStatus(message) {
     if (status) status.textContent = message || '';
+  }
+
+  function setUILanguage(lang) {
+    uiLanguage = lang;
+    document.documentElement.lang = lang === 'fr' ? 'fr' : 'en';
+
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      const key = el.dataset.i18n;
+      const value = i18n[lang][key];
+      if (typeof value === 'string') el.textContent = value;
+    });
+
+    nameInput.placeholder = i18n[lang].namePlaceholder;
+    titleInput.placeholder = i18n[lang].titlePlaceholder;
+    orgInput.placeholder = i18n[lang].orgPlaceholder;
+    canvas.setAttribute('aria-label', i18n[lang].canvasLabel);
+
+    uiEnglish.classList.toggle('is-selected', lang === 'en');
+    uiFrench.classList.toggle('is-selected', lang === 'fr');
+
+    setStatus('');
   }
 
   function loadTemplate(language) {
@@ -73,7 +170,7 @@
     img.onerror = () => {
       templateImage = null;
       draw();
-      setStatus(`Could not load ${language}.png. Check that it is inside the assets folder with exactly that filename.`);
+      setStatus(t('templateError')(language));
     };
 
     img.src = templates[language];
@@ -88,7 +185,6 @@
         );
         await face.load();
         document.fonts.add(face);
-        kelsonReady = true;
         draw();
       }
     } catch (err) {
@@ -347,13 +443,13 @@
       };
 
       img.onerror = () => {
-        setStatus('That image could not be opened. Try a JPG or PNG.');
+        setStatus(t('fileError'));
       };
 
       img.src = event.target.result;
     };
 
-    reader.onerror = () => setStatus('That image could not be read.');
+    reader.onerror = () => setStatus(t('readError'));
     reader.readAsDataURL(file);
   }
 
@@ -445,9 +541,6 @@
 
   canvas.addEventListener('pointerup', endDrag);
   canvas.addEventListener('pointercancel', endDrag);
-  canvas.addEventListener('pointerleave', (event) => {
-    if (!dragMode) canvas.style.cursor = 'default';
-  });
 
   photoInput.addEventListener('change', () => readPhoto(photoInput.files[0]));
 
@@ -474,6 +567,9 @@
     });
   });
 
+  uiEnglish.addEventListener('click', () => setUILanguage('en'));
+  uiFrench.addEventListener('click', () => setUILanguage('fr'));
+
   downloadButton.addEventListener('click', () => {
     draw();
 
@@ -490,7 +586,7 @@
     link.href = canvas.toDataURL('image/png');
     link.click();
 
-    setStatus('Your PNG has been generated.');
+    setStatus(t('downloadReady'));
   });
 
   clearButton.addEventListener('click', () => {
@@ -520,8 +616,7 @@
     setStatus('');
   });
 
-  // Important: load the template immediately. Font loading happens separately
-  // and only triggers a redraw, so a font issue can never blank the preview.
+  setUILanguage('en');
   loadTemplate('English');
   loadKelson();
 })();
