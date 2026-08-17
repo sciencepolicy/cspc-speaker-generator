@@ -99,6 +99,641 @@
     </section>
   </main>
 
-  <script src="script.js"></script>
+  <script>
+(() => {
+  'use strict';
+
+  const canvas = document.getElementById('graphicCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  const photoInput = document.getElementById('photoInput');
+  const zoomRange = document.getElementById('zoomRange');
+  const resetCropButton = document.getElementById('resetCrop');
+  const cropControls = document.getElementById('cropControls');
+  const resetDetailsButton = document.getElementById('resetDetails');
+  const nameInput = document.getElementById('nameInput');
+  const titleInput = document.getElementById('titleInput');
+  const orgInput = document.getElementById('orgInput');
+  const downloadButton = document.getElementById('downloadButton');
+  const clearButton = document.getElementById('clearButton');
+  const status = document.getElementById('status');
+  const uiEnglish = document.getElementById('uiEnglish');
+  const uiFrench = document.getElementById('uiFrench');
+
+  const TEMPLATE_SIZE = { width: 1080, height: 1350 };
+  const PHOTO_CIRCLE = { x: 273, y: 825, r: 188 };
+
+  const TEXT_BOX = {
+    x: 505,
+    defaultY: 735,
+    width: 455,
+    paddingX: 22,
+    paddingY: 20,
+    minY: 620,
+    maxBottom: 1080,
+    nameMaxSize: 52,
+    nameMinSize: 24,
+    titleMaxSize: 32,
+    titleMinSize: 18,
+    orgMaxSize: 29,
+    orgMinSize: 17,
+    lineHeight: 1.12,
+    sectionGap: 12
+  };
+
+  const templates = {
+    English: 'assets/English.png',
+    French: 'assets/French.png',
+    Bilingual: 'assets/Bilingual.png'
+  };
+
+  const i18n = {
+    en: {
+      title: 'Social Media Graphic Generator for CSPC 2026 Speakers',
+      intro: 'Create your personalized CSPC 2026 speaker graphic: Choose a language, upload and position your headshot and details, then download your finished image for social media.',
+      step1: '1. Choose your graphic',
+      graphicEnglish: 'English',
+      graphicFrench: 'Français',
+      graphicBilingual: 'Bilingual / Bilingue',
+      step2: '2. Upload your headshot',
+      choosePhoto: 'Choose photo',
+      photoPrivacy: 'JPG, PNG or HEIC supported by your browser. Your photo stays on your device.',
+      zoom: 'Zoom',
+      resetCrop: 'Reset crop',
+      photoDrag: 'Drag the photo directly in the preview to reposition it.',
+      step3: '3. Add your details',
+      nameLabel: 'Name',
+      titleLabel: 'Title / role',
+      orgLabel: 'Organization',
+      positionHeading: 'Position your details',
+      positionHelp: 'Drag the text box directly in the preview to reposition it.',
+      longTextHelp: 'Long names, titles and organizations automatically wrap and shrink to fit.',
+      resetText: 'Reset text position',
+      download: 'Download PNG',
+      startOver: 'Start over',
+      livePreview: 'Live preview',
+      previewTip: 'Tip: drag your headshot to adjust the crop. Drag anywhere inside the details box to reposition it.',
+      namePlaceholder: 'Dr. Jane Smith',
+      titlePlaceholder: 'Director of Research',
+      orgPlaceholder: 'Example Institute',
+      canvasLabel: 'CSPC speaker graphic preview',
+      fileError: 'That image could not be opened. Try a JPG or PNG.',
+      readError: 'That image could not be read.',
+      downloadReady: 'Your PNG has been generated.',
+      templateError: (language) => `Could not load ${language}.png. Check that it is inside the assets folder with exactly that filename.`
+    },
+    fr: {
+      title: 'Générateur de visuels pour les médias sociaux destiné aux conférenciers de la CPSC 2026',
+      intro: 'Créez votre visuel personnalisé de conférencier pour la CPSC 2026 : choisissez une langue, téléversez et positionnez votre photo et vos renseignements, puis téléchargez votre image finale pour les médias sociaux.',
+      step1: '1. Choisissez votre visuel',
+      graphicEnglish: 'Anglais',
+      graphicFrench: 'Français',
+      graphicBilingual: 'Bilingue',
+      step2: '2. Téléversez votre photo',
+      choosePhoto: 'Choisir une photo',
+      photoPrivacy: 'Formats JPG, PNG ou HEIC pris en charge par votre navigateur. Votre photo demeure sur votre appareil.',
+      zoom: 'Zoom',
+      resetCrop: 'Réinitialiser le cadrage',
+      photoDrag: 'Faites glisser la photo directement dans l’aperçu pour la repositionner.',
+      step3: '3. Ajoutez vos renseignements',
+      nameLabel: 'Nom',
+      titleLabel: 'Titre / rôle',
+      orgLabel: 'Organisation',
+      positionHeading: 'Positionnez vos renseignements',
+      positionHelp: 'Faites glisser la zone de texte directement dans l’aperçu pour la repositionner.',
+      longTextHelp: 'Les noms, titres et organisations plus longs passent automatiquement à la ligne et sont réduits au besoin.',
+      resetText: 'Réinitialiser la position du texte',
+      download: 'Télécharger le PNG',
+      startOver: 'Recommencer',
+      livePreview: 'Aperçu en direct',
+      previewTip: 'Astuce : faites glisser votre photo pour ajuster le cadrage. Faites glisser la zone de renseignements pour la repositionner.',
+      namePlaceholder: 'Dr Jane Smith',
+      titlePlaceholder: 'Directrice de la recherche',
+      orgPlaceholder: 'Institut exemple',
+      canvasLabel: 'Aperçu du visuel de conférencier de la CPSC',
+      fileError: 'Cette image n’a pas pu être ouverte. Essayez un fichier JPG ou PNG.',
+      readError: 'Cette image n’a pas pu être lue.',
+      downloadReady: 'Votre fichier PNG a été généré.',
+      templateError: (language) => `Impossible de charger ${language}.png. Vérifiez que le fichier se trouve dans le dossier assets et que son nom est exactement identique.`
+    }
+  };
+
+  let uiLanguage = 'en';
+  let activeLanguage = 'English';
+  let templateImage = null;
+  let headshot = null;
+  let crop = { x: 0, y: 0, zoom: 1 };
+  let detailsOffset = 0;
+  let detailsY = TEXT_BOX.defaultY;
+  let dragMode = null;
+  let dragStart = null;
+  let lastTextBounds = null;
+
+  function t(key) {
+    return i18n[uiLanguage][key];
+  }
+
+  function setStatus(message) {
+    if (status) status.textContent = message || '';
+  }
+
+  function setUILanguage(lang) {
+    uiLanguage = lang;
+    document.documentElement.lang = lang === 'fr' ? 'fr' : 'en';
+
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      const key = el.dataset.i18n;
+      const value = i18n[lang][key];
+      if (typeof value === 'string') el.textContent = value;
+    });
+
+    nameInput.placeholder = i18n[lang].namePlaceholder;
+    titleInput.placeholder = i18n[lang].titlePlaceholder;
+    orgInput.placeholder = i18n[lang].orgPlaceholder;
+    canvas.setAttribute('aria-label', i18n[lang].canvasLabel);
+
+    uiEnglish.classList.toggle('is-selected', lang === 'en');
+    uiFrench.classList.toggle('is-selected', lang === 'fr');
+
+    setStatus('');
+  }
+
+  function loadTemplate(language) {
+    activeLanguage = language;
+    const img = new Image();
+
+    img.onload = () => {
+      templateImage = img;
+      draw();
+      setStatus('');
+    };
+
+    img.onerror = () => {
+      templateImage = null;
+      draw();
+      setStatus(t('templateError')(language));
+    };
+
+    img.src = templates[language];
+  }
+
+  async function loadKelson() {
+    try {
+      if ('FontFace' in window) {
+        const face = new FontFace(
+          'Kelson Sans',
+          'url("assets/Kelson-Sans-Regular.otf") format("opentype")'
+        );
+        await face.load();
+        document.fonts.add(face);
+        draw();
+      }
+    } catch (err) {
+      console.warn('Kelson Sans could not be loaded; using a fallback font.', err);
+    }
+  }
+
+  function kelsonFont(size) {
+    return `${size}px "Kelson Sans", Arial, Helvetica, sans-serif`;
+  }
+
+  function wrapText(text, maxWidth, font) {
+    ctx.font = font;
+    const words = text.trim().split(/\s+/).filter(Boolean);
+    if (!words.length) return [];
+
+    const lines = [];
+    let line = '';
+
+    for (const word of words) {
+      const candidate = line ? `${line} ${word}` : word;
+
+      if (ctx.measureText(candidate).width <= maxWidth) {
+        line = candidate;
+        continue;
+      }
+
+      if (line) {
+        lines.push(line);
+        line = '';
+      }
+
+      if (ctx.measureText(word).width <= maxWidth) {
+        line = word;
+        continue;
+      }
+
+      let chunk = '';
+      for (const char of word) {
+        const test = chunk + char;
+        if (ctx.measureText(test).width > maxWidth && chunk) {
+          lines.push(chunk);
+          chunk = char;
+        } else {
+          chunk = test;
+        }
+      }
+      line = chunk;
+    }
+
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  function buildTextLayout(name, title, org) {
+    const availableWidth = TEXT_BOX.width;
+    const safeHeight = TEXT_BOX.maxBottom - TEXT_BOX.minY;
+    const minVerticalTravel = 120;
+    const maxHeight = safeHeight - minVerticalTravel;
+
+    let fallback = null;
+
+    for (let scale = 1; scale >= 0.42; scale -= 0.025) {
+      const nameSize = Math.max(TEXT_BOX.nameMinSize, Math.round(TEXT_BOX.nameMaxSize * scale));
+      const titleSize = Math.max(TEXT_BOX.titleMinSize, Math.round(TEXT_BOX.titleMaxSize * scale));
+      const orgSize = Math.max(TEXT_BOX.orgMinSize, Math.round(TEXT_BOX.orgMaxSize * scale));
+
+      const nameLines = name ? wrapText(name, availableWidth, kelsonFont(nameSize)) : [];
+      const titleLines = title ? wrapText(title, availableWidth, kelsonFont(titleSize)) : [];
+      const orgLines = org ? wrapText(org, availableWidth, kelsonFont(orgSize)) : [];
+
+      const nameLineH = Math.round(nameSize * TEXT_BOX.lineHeight);
+      const titleLineH = Math.round(titleSize * TEXT_BOX.lineHeight);
+      const orgLineH = Math.round(orgSize * TEXT_BOX.lineHeight);
+
+      let contentHeight = 0;
+
+      if (nameLines.length) contentHeight += nameLines.length * nameLineH;
+
+      if (titleLines.length) {
+        if (contentHeight) contentHeight += TEXT_BOX.sectionGap;
+        contentHeight += titleLines.length * titleLineH;
+      }
+
+      if (orgLines.length) {
+        if (contentHeight) contentHeight += TEXT_BOX.sectionGap;
+        contentHeight += orgLines.length * orgLineH;
+      }
+
+      const plateHeight = Math.max(48, contentHeight + TEXT_BOX.paddingY * 2);
+
+      fallback = {
+        nameSize, titleSize, orgSize,
+        nameLines, titleLines, orgLines,
+        nameLineH, titleLineH, orgLineH,
+        contentHeight, plateHeight
+      };
+
+      if (plateHeight <= maxHeight) return fallback;
+    }
+
+    return fallback;
+  }
+
+  function drawHeadshot() {
+    if (!headshot) return;
+
+    const diameter = PHOTO_CIRCLE.r * 2;
+    const baseScale = Math.max(diameter / headshot.width, diameter / headshot.height);
+    const scale = baseScale * crop.zoom;
+    const drawW = headshot.width * scale;
+    const drawH = headshot.height * scale;
+
+    const centerX = PHOTO_CIRCLE.x + crop.x;
+    const centerY = PHOTO_CIRCLE.y + crop.y;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(PHOTO_CIRCLE.x, PHOTO_CIRCLE.y, PHOTO_CIRCLE.r, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.drawImage(
+      headshot,
+      centerX - drawW / 2,
+      centerY - drawH / 2,
+      drawW,
+      drawH
+    );
+    ctx.restore();
+  }
+
+  function roundedRectPath(x, y, w, h, radius) {
+    const r = Math.min(radius, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  function drawDetails() {
+    const name = nameInput.value.trim();
+    const title = titleInput.value.trim();
+    const org = orgInput.value.trim();
+
+    if (!name && !title && !org) {
+      lastTextBounds = null;
+      return;
+    }
+
+    const layout = buildTextLayout(name, title, org);
+    if (!layout) return;
+
+    const plateX = TEXT_BOX.x - TEXT_BOX.paddingX;
+    const plateW = TEXT_BOX.width + TEXT_BOX.paddingX * 2;
+
+    const maxY = Math.max(TEXT_BOX.minY, TEXT_BOX.maxBottom - layout.plateHeight);
+    const baseY = Math.min(Math.max(TEXT_BOX.defaultY, TEXT_BOX.minY), maxY);
+
+    const minOffset = TEXT_BOX.minY - baseY;
+    const maxOffset = maxY - baseY;
+
+    detailsOffset = Math.max(minOffset, Math.min(maxOffset, detailsOffset));
+    detailsY = baseY + detailsOffset;
+
+    lastTextBounds = {
+      x: plateX,
+      y: detailsY,
+      width: plateW,
+      height: layout.plateHeight
+    };
+
+    ctx.save();
+
+    ctx.fillStyle = 'rgba(10, 29, 65, 0.78)';
+    roundedRectPath(plateX, detailsY, plateW, layout.plateHeight, 18);
+    ctx.fill();
+
+    ctx.textBaseline = 'top';
+    let y = detailsY + TEXT_BOX.paddingY;
+    const x = TEXT_BOX.x;
+
+    if (layout.nameLines.length) {
+      ctx.font = kelsonFont(layout.nameSize);
+      ctx.fillStyle = '#ffffff';
+      for (const line of layout.nameLines) {
+        ctx.fillText(line, x, y);
+        y += layout.nameLineH;
+      }
+    }
+
+    if (layout.titleLines.length) {
+      if (layout.nameLines.length) y += TEXT_BOX.sectionGap;
+      ctx.font = kelsonFont(layout.titleSize);
+      ctx.fillStyle = '#bfd4ea';
+      for (const line of layout.titleLines) {
+        ctx.fillText(line, x, y);
+        y += layout.titleLineH;
+      }
+    }
+
+    if (layout.orgLines.length) {
+      if (layout.nameLines.length || layout.titleLines.length) y += TEXT_BOX.sectionGap;
+      ctx.font = kelsonFont(layout.orgSize);
+      ctx.fillStyle = '#ffffff';
+      for (const line of layout.orgLines) {
+        ctx.fillText(line, x, y);
+        y += layout.orgLineH;
+      }
+    }
+
+    ctx.restore();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, TEMPLATE_SIZE.width, TEMPLATE_SIZE.height);
+
+    if (templateImage && templateImage.complete && templateImage.naturalWidth) {
+      ctx.drawImage(templateImage, 0, 0, TEMPLATE_SIZE.width, TEMPLATE_SIZE.height);
+    }
+
+    drawHeadshot();
+    drawDetails();
+  }
+
+  function resetCrop() {
+    crop = { x: 0, y: 0, zoom: 1 };
+    if (zoomRange) zoomRange.value = '1';
+    draw();
+  }
+
+  function resetDetails() {
+    detailsOffset = 0;
+    detailsY = TEXT_BOX.defaultY;
+    draw();
+  }
+
+  function readPhoto(file) {
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const img = new Image();
+
+      img.onload = () => {
+        headshot = img;
+        cropControls.hidden = false;
+        resetCrop();
+        setStatus('');
+      };
+
+      img.onerror = () => {
+        setStatus(t('fileError'));
+      };
+
+      img.src = event.target.result;
+    };
+
+    reader.onerror = () => setStatus(t('readError'));
+    reader.readAsDataURL(file);
+  }
+
+  function canvasPoint(event) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (event.clientX - rect.left) * (canvas.width / rect.width),
+      y: (event.clientY - rect.top) * (canvas.height / rect.height)
+    };
+  }
+
+  function isInsidePhotoCircle(point) {
+    const dx = point.x - PHOTO_CIRCLE.x;
+    const dy = point.y - PHOTO_CIRCLE.y;
+    return dx * dx + dy * dy <= PHOTO_CIRCLE.r * PHOTO_CIRCLE.r;
+  }
+
+  function isInsideTextBox(point) {
+    if (!lastTextBounds) return false;
+
+    return (
+      point.x >= lastTextBounds.x &&
+      point.x <= lastTextBounds.x + lastTextBounds.width &&
+      point.y >= lastTextBounds.y &&
+      point.y <= lastTextBounds.y + lastTextBounds.height
+    );
+  }
+
+  canvas.addEventListener('pointerdown', (event) => {
+    const point = canvasPoint(event);
+
+    if (headshot && isInsidePhotoCircle(point)) {
+      dragMode = 'photo';
+      dragStart = { point, cropX: crop.x, cropY: crop.y };
+    } else if (isInsideTextBox(point)) {
+      dragMode = 'details';
+      dragStart = { point, detailsOffset };
+    } else {
+      return;
+    }
+
+    event.preventDefault();
+    canvas.style.cursor = 'grabbing';
+
+    if (canvas.setPointerCapture) {
+      try { canvas.setPointerCapture(event.pointerId); } catch (_) {}
+    }
+  });
+
+  canvas.addEventListener('pointermove', (event) => {
+    const point = canvasPoint(event);
+
+    if (!dragMode) {
+      canvas.style.cursor =
+        isInsideTextBox(point) || (headshot && isInsidePhotoCircle(point))
+          ? 'grab'
+          : 'default';
+      return;
+    }
+
+    event.preventDefault();
+
+    if (dragMode === 'photo') {
+      crop.x = dragStart.cropX + (point.x - dragStart.point.x);
+      crop.y = dragStart.cropY + (point.y - dragStart.point.y);
+    }
+
+    if (dragMode === 'details') {
+      detailsOffset = dragStart.detailsOffset + (point.y - dragStart.point.y);
+    }
+
+    draw();
+  });
+
+  function endDrag(event) {
+    if (!dragMode) return;
+
+    dragMode = null;
+    canvas.style.cursor = 'default';
+
+    if (
+      canvas.releasePointerCapture &&
+      canvas.hasPointerCapture &&
+      canvas.hasPointerCapture(event.pointerId)
+    ) {
+      try { canvas.releasePointerCapture(event.pointerId); } catch (_) {}
+    }
+  }
+
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+
+  photoInput.addEventListener('change', () => readPhoto(photoInput.files[0]));
+
+  zoomRange.addEventListener('input', () => {
+    crop.zoom = Number(zoomRange.value);
+    draw();
+  });
+
+  resetCropButton.addEventListener('click', resetCrop);
+  resetDetailsButton.addEventListener('click', resetDetails);
+
+  [nameInput, titleInput, orgInput].forEach((el) => {
+    el.addEventListener('input', draw);
+  });
+
+  document.querySelectorAll('input[name="language"]').forEach((radio) => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.language-card').forEach((card) => {
+        card.classList.remove('is-selected');
+      });
+
+      radio.closest('.language-card').classList.add('is-selected');
+      loadTemplate(radio.value);
+    });
+  });
+
+  if (uiEnglish) {
+    uiEnglish.addEventListener('click', (event) => {
+      event.preventDefault();
+      setUILanguage('en');
+    });
+  }
+
+  if (uiFrench) {
+    uiFrench.addEventListener('click', (event) => {
+      event.preventDefault();
+      setUILanguage('fr');
+    });
+  }
+
+  downloadButton.addEventListener('click', () => {
+    draw();
+
+    const safeName =
+      nameInput.value
+        .trim()
+        .replace(/[^a-z0-9]+/gi, '-')
+        .replace(/^-|-$/g, '') || 'speaker';
+
+    const lang = activeLanguage.toLowerCase();
+    const link = document.createElement('a');
+
+    link.download = `CSPC2026-${safeName}-${lang}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+
+    setStatus(t('downloadReady'));
+  });
+
+  clearButton.addEventListener('click', () => {
+    photoInput.value = '';
+    headshot = null;
+    cropControls.hidden = true;
+
+    nameInput.value = '';
+    titleInput.value = '';
+    orgInput.value = '';
+
+    const englishRadio = document.querySelector(
+      'input[name="language"][value="English"]'
+    );
+
+    englishRadio.checked = true;
+
+    document.querySelectorAll('.language-card').forEach((card) => {
+      card.classList.remove('is-selected');
+    });
+
+    englishRadio.closest('.language-card').classList.add('is-selected');
+
+    resetCrop();
+    resetDetails();
+    loadTemplate('English');
+    setStatus('');
+  });
+
+  setUILanguage('en');
+  loadTemplate('English');
+  loadKelson();
+})();
+
+</script>
 </body>
 </html>
