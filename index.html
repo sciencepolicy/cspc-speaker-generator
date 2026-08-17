@@ -14,7 +14,7 @@
         <img class="cspc-header-logo" src="assets/CSPC-logo-bilingual.png" alt="Canadian Science Policy Centre / Centre sur les politiques scientifiques canadiennes" />
         <div>
           <h1 id="page-title">Social Media Graphic Generator for CSPC 2026 Speakers</h1>
-          <p class="intro">Create your personalized CSPC 2026 speaker graphic: Choose a language, upload and position your headshot, add your details, then download your finished image for social media.</p>
+          <p class="intro">Create your personalized CSPC 2026 speaker graphic in a few simple steps. Choose your language, upload and position your headshot, add your details, then download your finished image for social media.</p>
         </div>
       </header>
 
@@ -62,10 +62,9 @@
         <input id="orgInput" type="text" maxlength="240" placeholder="Example Institute" />
 
         <div class="crop-controls details-controls">
-          <label for="detailsPositionRange">Move details up / down</label>
-          <input id="detailsPositionRange" type="range" min="-115" max="205" step="1" value="0" />
+          <p class="helper"><strong>Position your details</strong><br>Drag the text box directly in the preview to reposition it.</p>
+          <p class="helper">Long names, titles and organizations automatically wrap and shrink to fit.</p>
           <button class="secondary" id="resetDetails" type="button">Reset text position</button>
-          <p class="helper">Long text automatically wraps and shrinks to fit. You can also drag the details box directly in the preview.</p>
         </div>
       </fieldset>
 
@@ -84,7 +83,7 @@
       <div class="canvas-wrap">
         <canvas id="graphicCanvas" width="1080" height="1350" aria-label="CSPC speaker graphic preview"></canvas>
       </div>
-      <p class="preview-tip">Tip: drag your headshot to adjust the crop, or drag the details box up and down.</p>
+      <p class="preview-tip">Tip: drag your headshot to adjust the crop. Drag anywhere inside the details box to reposition it.</p>
     </section>
   </main>
 
