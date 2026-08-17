@@ -12,11 +12,11 @@
 
     /* Make the preview feel like part of the page instead of a nested grey box. */
     .preview-panel {
-      background: #ffffff !important;
+      background: transparent !important;
     }
 
     .canvas-wrap {
-      background: #ffffff !important;
+      background: transparent !important;
       border: 0 !important;
       box-shadow: none !important;
       padding: 0 !important;
@@ -29,7 +29,7 @@
       height: auto;
       margin: 0 auto;
       border-radius: 8px;
-      box-shadow: 0 10px 28px rgba(16, 33, 74, 0.10);
+      box-shadow: none !important;
     }
 
     .preview-tip {
@@ -271,6 +271,44 @@
         border-radius: 15px;
       }
     }
+
+    .cspc-footer-inner {
+      align-items: start;
+    }
+
+    .footer-block:first-child {
+      background: #f6f9fd;
+      border: 1px solid #dce6f1;
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .footer-block:first-child .footer-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-block:first-child .footer-heading::before {
+      content: "";
+      width: 22px;
+      height: 22px;
+      flex: 0 0 22px;
+      background: no-repeat center / contain
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2310214a' d='M18 8a3 3 0 1 0-2.83-4H15a3 3 0 0 0 .47 1.6L8.91 9.38A3 3 0 1 0 9 14.6l6.47 3.73A3 3 0 1 0 16.5 16l-6.47-3.73a3.1 3.1 0 0 0 0-.54l6.56-3.78A3 3 0 0 0 18 8Z'/%3E%3C/svg%3E");
+    }
+
+    .footer-heading {
+      min-height: 28px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .footer-block + .footer-block {
+      padding-top: 16px;
+    }
+
   </style>
 
 </head>
@@ -355,7 +393,6 @@
     <section class="preview-panel" aria-labelledby="preview-title">
       <div class="preview-header">
         <h2 id="preview-title" data-i18n="livePreview">Live preview</h2>
-        <span>1080 × 1350 px</span>
       </div>
 
       <div class="canvas-wrap">
@@ -428,13 +465,13 @@
           <h2 class="footer-heading" data-i18n="footerExploreHeading">Explore</h2>
           <div class="footer-links">
             <a class="footer-link"
-               href="https://www.cspc2026.ca/"
+               href="https://www.sciencepolicyconference.ca/"
                target="_blank"
                rel="noopener noreferrer">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z"/>
               </svg>
-              <span data-i18n="footerConferenceLink">CSPC 2026</span>
+              <span data-i18n="footerConferenceLink">www.sciencepolicyconference.ca</span>
             </a>
 
             <a class="footer-link"
@@ -442,7 +479,7 @@
                target="_blank"
                rel="noopener noreferrer">
               <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.92 6h-3.03a15.7 15.7 0 0 0-1.38-3.12A8.05 8.05 0 0 1 18.92 8ZM12 4c.83 1.01 1.55 2.35 1.95 4h-3.9C10.45 6.35 11.17 5.01 12 4ZM4.26 14a7.7 7.7 0 0 1 0-4h3.39a16.5 16.5 0 0 0 0 4H4.26Zm.82 2h3.03c.31 1.13.78 2.18 1.38 3.12A8.05 8.05 0 0 1 5.08 16Zm3.03-8H5.08a8.05 8.05 0 0 1 4.41-3.12A15.7 15.7 0 0 0 8.11 8ZM12 20c-.83-1.01-1.55-2.35-1.95-4h3.9c-.4 1.65-1.12 2.99-1.95 4Zm2.35-6h-4.7a14.4 14.4 0 0 1 0-4h4.7a14.4 14.4 0 0 1 0 4Zm.16 5.12c.6-.94 1.07-1.99 1.38-3.12h3.03a8.05 8.05 0 0 1-4.41 3.12ZM16.35 14a16.5 16.5 0 0 0 0-4h3.39a7.7 7.7 0 0 1 0 4h-3.39Z"/>
+                <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z"/>
               </svg>
               <span data-i18n="footerCentreLink">CSPC website</span>
             </a>
@@ -546,7 +583,7 @@
       downloadReady: 'Your PNG has been generated.',
       footerTagHeading: 'Share your CSPC 2026 graphic',
       footerExploreHeading: 'Explore',
-      footerConferenceLink: 'CSPC 2026',
+      footerConferenceLink: 'www.sciencepolicyconference.ca',
       footerCentreLink: 'Canadian Science Policy Centre',
       footerHelpHeading: 'Questions or technical issues?',
       templateError: (language) => `Could not load ${language}.png. Check that it is inside the assets folder with exactly that filename.`
@@ -585,7 +622,7 @@
       downloadReady: 'Votre fichier PNG a été généré.',
       footerTagHeading: 'Partagez votre visuel de la CPSC 2026',
       footerExploreHeading: 'Explorer',
-      footerConferenceLink: 'CPSC 2026',
+      footerConferenceLink: 'www.sciencepolicyconference.ca',
       footerCentreLink: 'Centre sur les politiques scientifiques canadiennes',
       footerHelpHeading: 'Questions ou problèmes techniques?',
       templateError: (language) => `Impossible de charger ${language}.png. Vérifiez que le fichier se trouve dans le dossier assets et que son nom est exactement identique.`
