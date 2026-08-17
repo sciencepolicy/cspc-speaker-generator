@@ -87,8 +87,8 @@
 
     /* Footer: compact, connected, and intentionally secondary to the generator. */
     .cspc-footer {
-      grid-column: 1 / -1;
-      margin-top: 18px;
+      width: min(1444px, calc(100% - 56px));
+      margin: 18px auto 28px;
       padding: 20px 22px;
       border: 1px solid #d9e1eb;
       border-radius: 18px;
@@ -253,6 +253,10 @@
     }
 
     @media (max-width: 520px) {
+      .cspc-footer {
+        width: calc(100% - 32px);
+      }
+
       .interface-language {
         width: 100%;
       }
@@ -360,6 +364,8 @@
 
       <p class="preview-tip" data-i18n="previewTip">Tip: Drag your headshot to adjust the crop. Drag the text box with your name and affiliation to reposition it.</p>
     </section>
+  </main>
+
 
     <footer class="cspc-footer" aria-label="CSPC links, social media and contact information">
       <div class="cspc-footer-inner">
@@ -455,8 +461,6 @@
 
       </div>
     </footer>
-
-  </main>
 
   <script>
 (() => {
