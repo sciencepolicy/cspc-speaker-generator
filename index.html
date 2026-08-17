@@ -315,6 +315,317 @@
       border-top: 1px solid #e7ecf2;
     }
 
+
+    /* ===== Final polish ===== */
+    :root {
+      --cspc-radius: 14px;
+      --cspc-radius-sm: 10px;
+      --cspc-space-1: 8px;
+      --cspc-space-2: 12px;
+      --cspc-space-3: 18px;
+      --cspc-space-4: 24px;
+      --cspc-space-5: 32px;
+    }
+
+    .app-shell,
+    .controls,
+    .preview-panel,
+    .cspc-footer,
+    fieldset,
+    .crop-controls,
+    .language-card,
+    .upload-button,
+    .primary,
+    .secondary,
+    input[type="text"],
+    .footer-link,
+    .social-link {
+      border-radius: var(--cspc-radius) !important;
+    }
+
+    .controls {
+      padding: var(--cspc-space-4) !important;
+    }
+
+    .generator-header {
+      margin-bottom: var(--cspc-space-5) !important;
+    }
+
+    .generator-header .intro {
+      margin-top: 10px !important;
+      max-width: 46ch;
+    }
+
+    fieldset {
+      margin: 0 0 var(--cspc-space-5) !important;
+      padding: 0 !important;
+      border: 0 !important;
+    }
+
+    fieldset legend {
+      margin-bottom: var(--cspc-space-3) !important;
+    }
+
+    .language-grid {
+      gap: var(--cspc-space-2) !important;
+    }
+
+    .controls label:not(.language-card):not(.upload-button) {
+      margin-top: 14px;
+      margin-bottom: 7px;
+    }
+
+    .button-row {
+      margin-top: var(--cspc-space-4) !important;
+      gap: var(--cspc-space-2) !important;
+    }
+
+    .preview-panel {
+      padding: var(--cspc-space-4) !important;
+    }
+
+    .preview-header {
+      margin-bottom: var(--cspc-space-3) !important;
+    }
+
+    .preview-tip {
+      margin: 14px auto 0 !important;
+      max-width: 90%;
+    }
+
+    .crop-controls {
+      margin-top: 14px !important;
+      padding: 14px !important;
+    }
+
+    /* Tiny upload-success acknowledgement */
+    .upload-success {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 9px 12px;
+      background: #edf8f1;
+      border: 1px solid #c7ead2;
+      color: #147a3c;
+      border-radius: var(--cspc-radius-sm);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .upload-success[hidden] {
+      display: none !important;
+    }
+
+    .upload-success svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+      flex: 0 0 auto;
+    }
+
+    /* Download-success moment */
+    .download-success {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      margin-top: 18px;
+      padding: 14px 16px;
+      background: #eef9f2;
+      border: 1px solid #bfe6cb;
+      color: #10214a;
+      border-radius: var(--cspc-radius);
+      box-shadow: 0 8px 20px rgba(16, 33, 74, 0.06);
+    }
+
+    .download-success[hidden] {
+      display: none !important;
+    }
+
+    .download-success-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #138a48;
+      border: 1px solid #bfe6cb;
+    }
+
+    .download-success-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    .download-success strong,
+    .download-success span {
+      display: block;
+    }
+
+    .download-success strong {
+      margin-bottom: 2px;
+    }
+
+    .download-success span {
+      color: #4e6579;
+      font-size: 0.86rem;
+      line-height: 1.4;
+    }
+
+    .success-dismiss {
+      border: 0;
+      background: transparent;
+      color: #138a48;
+      font: inherit;
+      font-size: 1.35rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    .success-dismiss:hover,
+    .success-dismiss:focus-visible {
+      background: rgba(19, 138, 72, 0.08);
+      outline: 2px solid rgba(19, 138, 72, 0.28);
+      outline-offset: 2px;
+    }
+
+    /* Footer social icons now have more presence. */
+    .social-row {
+      gap: 12px !important;
+      margin-top: 12px;
+    }
+
+    .social-link {
+      width: 54px !important;
+      height: 54px !important;
+      border-radius: 14px !important;
+      transition:
+        transform 160ms ease,
+        background 160ms ease,
+        color 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease !important;
+    }
+
+    .social-link svg {
+      width: 25px !important;
+      height: 25px !important;
+    }
+
+    /* Brand-colour hover/focus states */
+    .social-link[aria-label*="LinkedIn"]:hover,
+    .social-link[aria-label*="LinkedIn"]:focus-visible {
+      background: #0A66C2 !important;
+      color: #ffffff !important;
+      border-color: #0A66C2 !important;
+    }
+
+    .social-link[aria-label*="Bluesky"]:hover,
+    .social-link[aria-label*="Bluesky"]:focus-visible {
+      background: #1185FE !important;
+      color: #ffffff !important;
+      border-color: #1185FE !important;
+    }
+
+    .social-link[aria-label*=" X"]:hover,
+    .social-link[aria-label*=" X"]:focus-visible,
+    .social-link[aria-label$="X"]:hover,
+    .social-link[aria-label$="X"]:focus-visible {
+      background: #000000 !important;
+      color: #ffffff !important;
+      border-color: #000000 !important;
+    }
+
+    .social-link[aria-label*="Facebook"]:hover,
+    .social-link[aria-label*="Facebook"]:focus-visible {
+      background: #1877F2 !important;
+      color: #ffffff !important;
+      border-color: #1877F2 !important;
+    }
+
+    .footer-block:first-child {
+      padding-top: 0 !important;
+    }
+
+    .footer-heading {
+      min-height: auto !important;
+      margin-bottom: 8px !important;
+    }
+
+    /* Mobile: one clean vertical workflow */
+    @media (max-width: 820px) {
+      .app-shell {
+        display: block !important;
+        width: min(100% - 24px, 760px) !important;
+        margin: 12px auto 0 !important;
+      }
+
+      .controls,
+      .preview-panel {
+        width: 100% !important;
+        max-width: none !important;
+      }
+
+      .preview-panel {
+        position: static !important;
+        margin-top: 18px !important;
+      }
+
+      .generator-header {
+        display: block !important;
+      }
+
+      .interface-language {
+        margin-top: 14px;
+      }
+
+      .language-grid {
+        grid-template-columns: 1fr !important;
+      }
+
+      .button-row {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+      }
+
+      .button-row > * {
+        width: 100% !important;
+      }
+
+      .cspc-footer {
+        width: calc(100% - 24px) !important;
+        margin-top: 18px !important;
+      }
+
+      .cspc-footer-inner {
+        grid-template-columns: 1fr !important;
+        row-gap: 28px !important;
+      }
+
+      .footer-right-stack {
+        padding-left: 0 !important;
+        padding-top: 22px !important;
+        border-left: 0 !important;
+        border-top: 1px dotted #c7d2e1 !important;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+
   </style>
 
 </head>
@@ -329,8 +640,8 @@
             <button type="button" id="uiFrench" class="ui-lang">Français</button>
           </div>
 
-          <h1 id="page-title" data-i18n="title">Social Media Graphic Generator for CSPC 2026 Speakers</h1>
-          <p class="intro" data-i18n="intro">Create your personalized CSPC 2026 speaker graphic: Choose a language, add and position your headshot and details, then download your image.</p>
+          <h1 id="page-title" data-i18n="title">Graphic Generator - CSPC 2026 Speaker</h1>
+          <p class="intro" data-i18n="intro">Create your personalized CSPC 2026 Speaker graphic.</p>
         </div>
       </header>
 
@@ -356,6 +667,14 @@
         <legend data-i18n="step2">2. Upload your headshot</legend>
         <label class="upload-button" for="photoInput" data-i18n="choosePhoto">Choose photo</label>
         <input id="photoInput" type="file" accept="image/*" />
+
+        <div class="upload-success" id="uploadSuccess" hidden role="status" aria-live="polite">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9.55 17.6 4.9 12.95l1.4-1.4 3.25 3.25 8.15-8.15 1.4 1.4L9.55 17.6Z"/>
+          </svg>
+          <span data-i18n="photoAdded">Photo added successfully!</span>
+        </div>
+
         <p class="helper" data-i18n="photoPrivacy">JPG, PNG or HEIC supported by your browser. Your photo stays on your device.</p>
 
         <div class="crop-controls" id="cropControls" hidden>
@@ -406,6 +725,18 @@
       </div>
 
       <p class="preview-tip" data-i18n="previewTip">Tip: Drag your headshot to adjust the crop. Drag the text box with your name and affiliation to reposition it.</p>
+
+      <div class="download-success" id="downloadSuccess" hidden role="status" aria-live="polite">
+        <div class="download-success-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9.55 17.6 4.9 12.95l1.4-1.4 3.25 3.25 8.15-8.15 1.4 1.4L9.55 17.6Z"/></svg>
+        </div>
+        <div>
+          <strong data-i18n="graphicReady">Your CSPC 2026 graphic is ready!</strong>
+          <span data-i18n="graphicReadySub">Your PNG has been downloaded. Share it with your network and tag CSPC.</span>
+        </div>
+        <button type="button" id="dismissSuccess" class="success-dismiss" aria-label="Dismiss">×</button>
+      </div>
+
     </section>
   </main>
 
@@ -526,6 +857,9 @@
   const status = document.getElementById('status');
   const uiEnglish = document.getElementById('uiEnglish');
   const uiFrench = document.getElementById('uiFrench');
+  const uploadSuccess = document.getElementById('uploadSuccess');
+  const downloadSuccess = document.getElementById('downloadSuccess');
+  const dismissSuccess = document.getElementById('dismissSuccess');
 
   const TEMPLATE_SIZE = { width: 1080, height: 1350 };
   const PHOTO_CIRCLE = { x: 273, y: 825, r: 188 };
@@ -556,8 +890,8 @@
 
   const i18n = {
     en: {
-      title: 'Social Media Graphic Generator for CSPC 2026 Speakers',
-      intro: 'Create your personalized CSPC 2026 speaker graphic: Choose a language, add and position your headshot and details, then download your image for social media.',
+      title: 'Graphic Generator - CSPC 2026 Speaker',
+      intro: 'Create your personalized CSPC 2026 Speaker graphic.',
       step1: '1. Choose your graphic',
       graphicEnglish: 'English',
       graphicFrench: 'French',
@@ -587,6 +921,9 @@
       fileError: 'That image could not be opened. Try a JPG or PNG.',
       readError: 'That image could not be read.',
       downloadReady: 'Your PNG has been generated.',
+      photoAdded: 'Photo added successfully!',
+      graphicReady: 'Your CSPC 2026 graphic is ready!',
+      graphicReadySub: 'Your PNG has been downloaded. Share it with your network and tag CSPC.',
       footerTagHeading: 'Share your CSPC 2026 graphic',
       footerExploreHeading: 'Explore',
       footerConferenceLink: 'CSPC 2026',
@@ -595,8 +932,8 @@
       templateError: (language) => `Could not load ${language}.png. Check that it is inside the assets folder with exactly that filename.`
     },
     fr: {
-      title: 'Générateur de visuels pour les médias sociaux destiné aux conférenciers de la CPSC 2026',
-      intro: 'Créez votre visuel personnalisé de conférencier pour la CPSC 2026 : Choisissez une langue, téléversez et positionnez votre photo et vos renseignements, puis téléchargez votre image finale pour les médias sociaux.',
+      title: 'Générateur de visuels - Conférencier de la CPSC 2026',
+      intro: 'Créez votre visuel personnalisé de conférencier pour la CPSC 2026.',
       step1: '1. Choisissez votre visuel',
       graphicEnglish: 'Anglais',
       graphicFrench: 'Français',
@@ -626,6 +963,9 @@
       fileError: 'Cette image n’a pas pu être ouverte. Essayez un fichier JPG ou PNG.',
       readError: 'Cette image n’a pas pu être lue.',
       downloadReady: 'Votre fichier PNG a été généré.',
+      photoAdded: 'Photo ajoutée avec succès!',
+      graphicReady: 'Votre visuel de la CPSC 2026 est prêt!',
+      graphicReadySub: 'Votre fichier PNG a été téléchargé. Partagez-le avec votre réseau et identifiez la CPSC.',
       footerTagHeading: 'Partagez votre visuel de la CPSC 2026',
       footerExploreHeading: 'Explorer',
       footerConferenceLink: 'CPSC 2026',
@@ -956,11 +1296,14 @@
       img.onload = () => {
         headshot = img;
         cropControls.hidden = false;
+        if (uploadSuccess) uploadSuccess.hidden = false;
+        if (downloadSuccess) downloadSuccess.hidden = true;
         resetCrop();
         setStatus('');
       };
 
       img.onerror = () => {
+        if (uploadSuccess) uploadSuccess.hidden = true;
         setStatus(t('fileError'));
       };
 
@@ -1099,6 +1442,12 @@
     });
   }
 
+  if (dismissSuccess) {
+    dismissSuccess.addEventListener('click', () => {
+      if (downloadSuccess) downloadSuccess.hidden = true;
+    });
+  }
+
   downloadButton.addEventListener('click', () => {
     draw();
 
@@ -1115,6 +1464,7 @@
     link.href = canvas.toDataURL('image/png');
     link.click();
 
+    if (downloadSuccess) downloadSuccess.hidden = false;
     setStatus(t('downloadReady'));
   });
 
@@ -1122,6 +1472,8 @@
     photoInput.value = '';
     headshot = null;
     cropControls.hidden = true;
+    if (uploadSuccess) uploadSuccess.hidden = true;
+    if (downloadSuccess) downloadSuccess.hidden = true;
 
     nameInput.value = '';
     titleInput.value = '';
